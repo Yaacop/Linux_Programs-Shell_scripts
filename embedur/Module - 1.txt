@@ -1,0 +1,54 @@
+Module - 1
+
+
+1 . yaacop@YAACOP-PC:~/embedur/module1$ touch file1
+    yaacop@YAACOP-PC:~/embedur/module1$ chmod -x file1
+
+2.  yaacop@YAACOP-PC:~/embedur/module1$ touch file2
+    yaacop@YAACOP-PC:~/embedur/module1$ ls -l file2
+    yaacop@YAACOP-PC:~/embedur/module1$ ls -l file2
+    -rw-r--r-- 1 yaacop yaacop 0 Feb 14 14:12 file2
+
+3. yaacop@YAACOP-PC:~/embedur/module1$ mkdir -p dir1/dir2 
+   yaacop@YAACOP-PC:~/embedur/module1$ touch dir1/dir2/file
+   yaacop@YAACOP-PC:~/embedur/module1$ ln -s dir1/dir2/file dir1/file_link
+   yaacop@YAACOP-PC:~/embedur/module1/dir1$ ls
+   dir2  file_link
+
+4. yaacop@YAACOP-PC:~/embedur/module1$ ps -e
+    PID TTY          TIME CMD
+      1 ?        00:00:00 systemd
+      2 ?        00:00:00 init-systemd(Ub
+      8 ?        00:00:00 init
+     54 ?        00:00:00 systemd-journal
+    100 ?        00:00:00 systemd-udevd
+    179 ?        00:00:00 systemd-resolve
+    180 ?        00:00:00 systemd-timesyn
+    189 ?        00:00:00 cron
+    190 ?        00:00:00 dbus-daemon
+    203 ?        00:00:00 systemd-logind
+    205 ?        00:00:00 wsl-pro-service
+    212 ?        00:00:00 rsyslogd
+    226 hvc0     00:00:00 agetty
+    229 tty1     00:00:00 agetty
+    235 ?        00:00:00 unattended-upgr
+    324 ?        00:00:00 SessionLeader
+    325 ?        00:00:00 Relay(326)
+    326 pts/0    00:00:00 bash
+    327 pts/1    00:00:00 login
+    370 ?        00:00:00 systemd
+    371 ?        00:00:00 (sd-pam)
+    395 pts/1    00:00:00 bash
+    730 pts/0    00:00:00 ps
+
+
+5.  yaacop@YAACOP-PC:~/embedur/module1/dir1$ touch file1 file2 file3
+    yaacop@YAACOP-PC:~/embedur/module1/dir1$ ls -lt > output.txt
+    yaacop@YAACOP-PC:~/embedur/module1/dir1$ cat output.txt
+    total 4
+    -rw-r--r-- 1 yaacop yaacop    0 Feb 14 14:24 output.txt
+    -rw-r--r-- 1 yaacop yaacop    0 Feb 14 14:24 file1
+    -rw-r--r-- 1 yaacop yaacop    0 Feb 14 14:24 file2
+    -rw-r--r-- 1 yaacop yaacop    0 Feb 14 14:24 file3
+     lrwxrwxrwx 1 yaacop yaacop   14 Feb 14 14:20 file_link -> dir1/dir2/file
+     drwxr-xr-x 2 yaacop yaacop 4096 Feb 14 14:17 dir2

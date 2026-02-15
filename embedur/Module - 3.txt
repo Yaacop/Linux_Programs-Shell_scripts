@@ -1,0 +1,104 @@
+
+1,5
+
+SRC="$1"
+DEST="$2"
+EXT="$3"
+
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 \"source_dir\" \"backup_dir\" \".ext\""
+    exit 1
+fi
+
+if [ ! -d "$SRC" ]; then
+    echo "Source directory does not exist."
+    exit 1
+fi
+
+if [ ! -d "$DEST" ]; then
+    mkdir -p "$DEST" || { echo "Failed to create backup directory"; exit 1; }
+fi
+
+
+2,4
+
+shopt -s nullglob
+files=("$SRC"/*"$EXT")
+
+if [ ${#files[@]} -eq 0 ]; then
+    echo "No matching files found."
+    exit 0
+fi
+
+3.
+
+export BACKUP_COUNT=0
+TOTAL_SIZE=0
+
+echo "Files to be backed up:"
+echo "----------------------"
+
+# Print names and sizes
+for f in "${files[@]}"; do
+    size=$(stat -c%s "$f")
+    echo "$(basename "$f") - $size bytes"
+done
+
+echo ""
+echo "Starting backup..."
+echo "----------------------"
+
+5.
+
+for f in "${files[@]}"; do
+    base=$(basename "$f")
+    dest_file="$DEST/$base"
+
+    size=$(stat -c%s "$f")
+
+    if [ -f "$dest_file" ]; then
+        if [ "$f" -nt "$dest_file" ]; then
+            cp "$f" "$dest_file"
+            ((BACKUP_COUNT++))
+            ((TOTAL_SIZE+=size))
+            echo "Updated: $base"
+        else
+            echo "Skipped (newer exists): $base"
+        fi
+    else
+        cp "$f" "$dest_file"
+        ((BACKUP_COUNT++))
+        ((TOTAL_SIZE+=size))
+        echo "Copied: $base"
+    fi
+done
+
+6.
+
+REPORT="$DEST/backup_report.log"
+
+{
+echo "Backup Summary"
+echo "=============="
+echo "Total files processed: ${#files[@]}"
+echo "Total files backed up: $BACKUP_COUNT"
+echo "Total size backed up: $TOTAL_SIZE bytes"
+echo "Backup directory: $DEST"
+echo "Date: $(date)"
+} > "$REPORT"
+
+echo ""
+echo "Backup complete."
+echo "Report saved to $REPORT"
+
+yaacop@YAACOP-PC:~/embedur/module3$ ./backup_manager.sh "/home/yaacop/embedur" "/home/yaacop/embedur/module3/backup" ".txt"
+
+yaacop@YAACOP-PC:~/embedur/module3/backup$ cat backup_report.log
+Backup Summary
+==============
+Total files processed: 2
+Total files backed up: 2
+Total size backed up: 3291 bytes
+Backup directory: /home/yaacop/embedur/module3/backup
+Date: Sun Feb 15 17:07:56 UTC 2026
+

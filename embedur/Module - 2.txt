@@ -1,0 +1,22 @@
+1. yaacop@YAACOP-PC:~/embedur/module2$ find . -type f -size +1M > large_files.txt
+
+2.yaacop@YAACOP-PC:~/embedur/module2$ cat file1
+  localhost
+  yaacop@YAACOP-PC:~/embedur/module2$ sed 's/localhost/127.0.0.1/g' file1 > updated_config.txt
+  yaacop@YAACOP-PC:~/embedur/module2$ cat updated_config.txt
+  127.0.0.1
+
+3. yaacop@YAACOP-PC:~/embedur/module2$ grep "ERROR" log_file.txt | grep -v "DEBUG" > filtered_log.txt
+   yaacop@YAACOP-PC:~/embedur/module2$ cat filtered_log.txt
+   ERROR: Unable to connect to the database.
+   ERROR: Failed to fetch data from API endpoint '/users'.
+   ERROR: Missing required parameter in the request.
+
+4. yaacop@YAACOP-PC:~/embedur/module2$ ps aux --sort=-%mem | head -2
+   USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+   root         236  0.0  0.2 107020 22784 ?        Ssl  15:58   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-       shutdown --wait-for-signal
+
+   yaacop@YAACOP-PC:~/embedur/module2$ kill -9 $(ps aux --sort=-%mem | awk 'NR==2 {print $2}')
+
+5. yaacop@YAACOP-PC:~/embedur/module2$ ip route | grep default | awk '{print $3}' | sort
+   172.29.0.1

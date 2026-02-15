@@ -1,0 +1,67 @@
+yaacop@YAACOP-PC:~/embedur/module4$ cat extract_params.sh
+#!/bin/bash
+
+INPUT="$1"
+OUTPUT="output.txt"
+
+# Check input
+if [ -z "$INPUT" ] || [ ! -f "$INPUT" ]; then
+    echo "Usage: $0 input.txt"
+    exit 1
+fi
+
+> "$OUTPUT"   # clear output file
+
+while IFS= read -r line
+do
+    case "$line" in
+        *frame.time*)
+            val=$(echo "$line" | cut -d':' -f2- | xargs)
+            echo "\"frame.time\": \"$val\"," >> "$OUTPUT"
+            ;;
+
+        *wlan.fc.type*)
+            val=$(echo "$line" | cut -d':' -f2- | xargs)
+            echo "\"wlan.fc.type\": \"$val\"," >> "$OUTPUT"
+            ;;
+
+        *wlan.fc.subtype*)
+            val=$(echo "$line" | cut -d':' -f2- | xargs)
+            echo "\"wlan.fc.subtype\": \"$val\"" >> "$OUTPUT"
+            ;;
+    esac
+
+done < "$INPUT"
+
+echo "Extraction complete → output.txt"
+
+output --> is shortened 
+
+"wlan.fc.subtype": "8,
+",rame.time": "Dec 31, 2024 12:50:50.402371000 India Standard Time,
+",rame.time": "Dec 31, 2024 07:20:50.402371000 UTC,
+",rame.time": "1735629650.402371000,
+",rame.time": "0.036811000,
+",rame.time": "0.036811000,
+",rame.time": "24.511401000,
+",lan.fc.type": "0x0008,
+",lan.fc.type": "0,
+"wlan.fc.subtype": "8,
+",rame.time": "Dec 31, 2024 12:50:50.456701000 India Standard Time,
+",rame.time": "Dec 31, 2024 07:20:50.456701000 UTC,
+",rame.time": "1735629650.456701000,
+",rame.time": "0.054330000,
+",rame.time": "0.054330000,
+",rame.time": "24.565731000,
+",lan.fc.type": "0x0008,
+",lan.fc.type": "0,
+"wlan.fc.subtype": "8,
+",rame.time": "Dec 31, 2024 12:50:50.457169000 India Standard Time,
+",rame.time": "Dec 31, 2024 07:20:50.457169000 UTC,
+",rame.time": "1735629650.457169000,
+",rame.time": "0.000468000,
+",rame.time": "0.000468000,
+",rame.time": "24.566199000,
+",lan.fc.type": "0x0008,
+",lan.fc.type": "0,
+"wlan.fc.subtype": "8,

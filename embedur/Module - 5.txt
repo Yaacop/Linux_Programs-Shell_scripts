@@ -1,0 +1,134 @@
+yaacop@YAACOP-PC:~/embedur/module5$ cat file_analyzer.sh
+#!/bin/bash
+
+ERROR_LOG="errors.log"
+
+# ---------------- HELP MENU (Here Document) ----------------
+show_help() {
+cat << EOF
+Usage: $0 [OPTIONS]
+
+Options:
+  -d <directory>   Directory to search recursively
+  -k <keyword>     Keyword to search
+  -f <file>        Search directly in a file
+  -h               Display help
+
+Examples:
+  $0 -d logs -k error
+  $0 -f script.sh -k TODO
+EOF
+}
+
+# ---------------- ERROR LOGGING ----------------
+log_error() {
+    echo "ERROR: $1" | tee -a "$ERROR_LOG" >&2
+}
+
+# ---------------- REGEX VALIDATION ----------------
+valid_keyword() {
+    [[ "$1" =~ ^[a-zA-Z0-9_]+$ ]]
+}
+
+# ---------------- RECURSIVE FUNCTION ----------------
+search_recursive() {
+    local dir="$1"
+    local key="$2"
+
+    for item in "$dir"/*; do
+        [ -e "$item" ] || continue
+
+        if [ -f "$item" ]; then
+            if grep -q "$key" "$item"; then
+                echo "Match found in: $item"
+            fi
+        elif [ -d "$item" ]; then
+            search_recursive "$item" "$key"
+        fi
+    done
+}
+
+# ---------------- GETOPTS ----------------
+while getopts ":d:k:f:h" opt; do
+    case $opt in
+        d) DIR="$OPTARG" ;;
+        k) KEYWORD="$OPTARG" ;;
+        f) FILE="$OPTARG" ;;
+        h) show_help; exit 0 ;;
+        \?) log_error "Invalid option"; exit 1 ;;
+    esac
+done
+
+# ---------------- SPECIAL PARAMETERS ----------------
+echo "Script: $0"
+echo "Total args: $#"
+echo "All args: $@"
+
+# ---------------- VALIDATIONS ----------------
+if [ -z "$KEYWORD" ]; then
+    log_error "Keyword missing"
+    exit 1
+fi
+
+if ! valid_keyword "$KEYWORD"; then
+    log_error "Invalid keyword"
+    exit 1
+fi
+
+# ---------------- FILE SEARCH (Here String) ----------------
+if [ -n "$FILE" ]; then
+    if [ ! -f "$FILE" ]; then
+        log_error "File not found"
+        exit 1
+    fi
+
+    echo "Searching in file: $FILE"
+    grep "$KEYWORD" <<< "$(cat "$FILE")"
+    echo "Exit status: $?"
+fi
+
+# ---------------- DIRECTORY SEARCH ----------------
+if [ -n "$DIR" ]; then
+    if [ ! -d "$DIR" ]; then
+        log_error "Directory not found"
+        exit 1
+    fi
+
+    search_recursive "$DIR" "$KEYWORD"
+    echo "Exit status: $?"
+fi
+
+
+yaacop@YAACOP-PC:~/embedur/module5$ ./file_analyzer.sh -d logs -k ERROR
+Script: ./file_analyzer.sh
+Total args: 4
+All args: -d logs -k ERROR
+Match found in: logs/app.log
+Match found in: logs/subdir/network.log
+Match found in: logs/system.log
+Exit status: 0
+
+
+yaacop@YAACOP-PC:~/embedur/module5$ ./file_analyzer.sh -f logs/app.log -k ERROR
+Script: ./file_analyzer.sh
+Total args: 4
+All args: -f logs/app.log -k ERROR
+Searching in file: logs/app.log
+ERROR: Database connection failed
+ERROR: Failed to load configuration
+Exit status: 0
+
+
+yaacop@YAACOP-PC:~/embedur/module5$ ./file_analyzer.sh -h
+Usage: ./file_analyzer.sh [OPTIONS]
+
+Options:
+  -d <directory>   Directory to search recursively
+  -k <keyword>     Keyword to search
+  -f <file>        Search directly in a file
+  -h               Display help
+
+Examples:
+  ./file_analyzer.sh -d logs -k error
+  ./file_analyzer.sh -f script.sh -k TODO
+
